@@ -7,7 +7,7 @@ public class Program {
 
 	public static void main(String[] args) {
 		
-		 Locale.setDefault(new Locale("en", "US"));
+		 Locale.setDefault(Locale.US);
 	     Scanner sc = new Scanner (System.in);
 	       
 	     double rendaAnualSalario, rendaAnualServico, rendaAnualCapital, salarioMensal;
@@ -67,6 +67,7 @@ public class Program {
 	     System.out.printf("Imposto devido: %.2f", impostoLiquido);	     
 	        
 	     sc.close();  
-	    }
 
 	}
+
+}
