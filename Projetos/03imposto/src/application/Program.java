@@ -1,4 +1,4 @@
-package aplication;
+package application;
 
 import java.util.Scanner;
 import java.util.Locale;
@@ -30,6 +30,7 @@ public class Program {
 	     System.out.println("\nRELATORIO DE IMPOSTO DE RENDA\n");
 	     System.out.println("CONSOLIDADO DE RENDA: ");
 	     salarioMensal = rendaAnualSalario / 12.0;
+	     
 	     if (salarioMensal < 3000.0) {
 	         impostoSalario = 0.0;
 	     } else if (salarioMensal <= 5000) {
