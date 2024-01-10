@@ -23,13 +23,14 @@ public class Program {
 		System.out.println("Digite a nota do 3º trimestre: ");
 		st.grade3 = sc.nextDouble();
 		
-		if (st.result(st.getFinalGrade())) {
+		System.out.println(st);
+		
+		if (st.result()) {
 			System.out.println("PASS");
 		} else {
 			System.out.println("FAILED");
+			System.out.printf("FALTARAM %.2f PONTOS PARA PASSAR", st.missingPoints());
 		}
-		
-		System.out.println(st);
 		
 		sc.close();
 	}
