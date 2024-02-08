@@ -23,7 +23,7 @@ public class Program {
 		System.out.printf("Quantidade de espetinho: ");
 		bill.barbecue = sc.nextInt();
 		
-		System.out.println("\nRELATORIO: \n");
+		System.out.println("\nRELATORIO DA COMPRA: \n");
 		System.out.printf("Consumo = R$ " + String.format("%.2f", bill.feeding()));
 		
 		if (bill.cover() == 0.0) {
