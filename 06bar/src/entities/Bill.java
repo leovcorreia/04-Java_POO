@@ -2,14 +2,14 @@ package entities;
 
 public class Bill {
 	
-	public static char gender;
-	public static int beer, barbecue, softDrink;
+	public char gender;
+	public int beer, barbecue, softDrink;
 
-	public static double feeding() {
+	public double feeding() {
 		return (beer * 5) + (barbecue * 7) + (softDrink * 3);
 	}
 	
-	public static double cover() {
+	public double cover() {
 		if (feeding() <= 30.0) {
 			return 4.0;
 		} else {
@@ -17,7 +17,7 @@ public class Bill {
 		}
 	}
 	
-	public static double ticket() {
+	public double ticket() {
 		if ((gender == 'F') || (gender == 'f')) {
 			return 8.0;
 		} else {
@@ -25,7 +25,7 @@ public class Bill {
 		} 
 	}
 	
-	public static double total() {
+	public double total() {
 		return feeding() + cover() + ticket();
 	}
 
