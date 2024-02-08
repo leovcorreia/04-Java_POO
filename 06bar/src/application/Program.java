@@ -23,8 +23,17 @@ public class Program {
 		System.out.printf("Quantidade de espetinho: ");
 		bill.barbecue = sc.nextInt();
 		
-		System.out.printf("Sexo = %c", bill.gender);
-		System.out.printf("\nQtd cervejas = %d", bill.beer);
+		System.out.println("\nRELATORIO: \n");
+		System.out.printf("Consumo = R$ " + String.format("%.2f", bill.feeding()));
+		
+		if (bill.cover() == 0.0) {
+			System.out.printf("\nIsento de Couvert");
+		} else {
+			System.out.printf("\nCouvert = R$ " + String.format("%.2f", bill.cover()));
+		}
+		
+		System.out.printf("\nIngresso = R$ " + String.format("%.2f\n", bill.ticket()));
+		System.out.printf("\nValor a pagar = R$ " + String.format("%.2f", bill.total()));
 		
 		sc.close();
 	}
