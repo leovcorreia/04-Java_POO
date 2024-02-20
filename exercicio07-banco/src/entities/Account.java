@@ -6,11 +6,39 @@ public class Account {
 	public String holderName;
 	public double balance;
 	
-	public Account(int number, String holderName, double balance) { // Construtor
-		super();
+	public Account(int number, String holderName) {
 		this.number = number;
 		this.holderName = holderName;
-		this.balance = balance;
+	}
+
+	public Account(int number, String holderName, double initialDeposit) {
+		this.number = number;
+		this.holderName = holderName;
+		deposit(initialDeposit);
+	}
+	
+	public int getNumber() {
+		return number;
+	}
+
+	public String getHolderName() {
+		return holderName;
+	}
+
+	public void setHolderName(String holderName) {
+		this.holderName = holderName;
+	}
+
+	public double getBalance() {
+		return balance;
+	}
+
+	public void deposit(double amount) {
+		this.balance += amount;
+	}
+	
+	public void withdraw(double amount) {
+		this.balance -= amount + 5.00;
 	}
 	
 	public String toString() {
@@ -18,6 +46,4 @@ public class Account {
 				", Balance: " + String.format("%.2f", balance);
 	}
 	
-	
-
 }

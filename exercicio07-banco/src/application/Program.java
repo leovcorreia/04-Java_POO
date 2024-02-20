@@ -15,20 +15,53 @@ public class Program {
 		System.out.println("Enter account number: ");
 		int number = sc.nextInt();
 		sc.nextLine(); // Limpeza buffer
+		
 		System.out.println("Enter account holder: ");
 		String holderName = sc.nextLine();
+		
 		System.out.println("Is there an initial deposit (y/n)? ");
-		char verification = sc.next().charAt(0);
+		char response = sc.next().charAt(0);
 		
 		double initialDeposit = 0.0;
-		if ((verification == 'y') || (verification == 'Y')) {
+		Account ac;
+		if ((response == 'y') || (response == 'Y')) {
 			System.out.println("Enter initial deposit value: ");
 			initialDeposit = sc.nextDouble();
+			
+			ac = new Account(number, holderName, initialDeposit);  // Construtor c/ depósito inicial na conta
+		} else {
+			ac = new Account(number, holderName);  // Construtor c/ saldo da conta igual a zero
 		}
 		
-		Account ac = new Account(number, holderName, initialDeposit); // Construtor
-		
+		System.out.println("\nAccount data: ");
 		System.out.println(ac);
+		
+		System.out.println("\nEnter a deposite value: ");
+		double depositValue = sc.nextDouble();
+		ac.deposit(depositValue); // Chamando método de depósito
+		
+		System.out.println("Updated account data: ");
+		System.out.println(ac);
+		
+		System.out.println("\nEnter a withdraw value: ");
+		double withdrawValue = sc.nextDouble();
+		ac.withdraw(withdrawValue); // Chamando método de saque
+		
+		System.out.println("Updated account data: ");
+		System.out.println(ac);
+		
+		System.out.println("\nUsing Get methods: ");
+		System.out.println("Account number = " + ac.getNumber());
+		System.out.println("Account holder = " + ac.getHolderName());
+		System.out.println("Account balance = " + String.format("%.2f", ac.getBalance()));
+		
+		System.out.println("\nUsing Set methods: ");
+		System.out.println("Enter the new holder name: ");
+		sc.nextLine();
+		String newHolder = sc.nextLine();
+		ac.setHolderName(newHolder);
+		
+		System.out.println("The new holder name: " + ac.getHolderName());
 		
 		sc.close();
 	}
