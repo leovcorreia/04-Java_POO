@@ -3,8 +3,8 @@ package entities;
 public class Account {
 	
 	private int number;
-	public String holderName;
-	public double balance;
+	private String holderName;
+	private double balance;
 	
 	public Account(int number, String holderName) {
 		this.number = number;
