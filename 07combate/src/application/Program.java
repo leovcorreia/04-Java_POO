@@ -40,15 +40,18 @@ public class Program {
 		sc.nextLine(); // limpeza buffer
 		System.out.println("\nQuantos turnos você deseja executar? ");
 		int rounds = sc.nextInt();
+		sc.nextLine(); // limpeza buffer
 		
 		int i = 1;
-		while ((i <= rounds) || (champ1.getLife() == 0) || (champ2.getLife() == 0)) {
+		while ((i <= rounds) && (champ1.getLife() > 0) && (champ2.getLife() > 0)) {
 			champ1.takeDamage(champ2);
 			champ2.takeDamage(champ1);
 			System.out.println("\nResultado do turno " + i + ": ");
+			// System.out.println("Vida do campeão 1: " + champ1.getLife());
+			// System.out.println("Vida do campeão 2: " + champ2.getLife());
 			champ1.status();
 			champ2.status();
-			i++;
+			i += 1;
 		}
 		
 		System.out.println("\nFIM DO COMBATE!");

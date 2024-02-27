@@ -41,20 +41,21 @@ public class Champion {
 	}
 
 	public void takeDamage(Champion otherChamp) {
-		if (this.armor >= otherChamp.attack) {
-			this.life -= 1;
+		if (armor >= otherChamp.attack) {
+			life -= 1;
 		} else {
-			this.life -= otherChamp.attack + this.armor;
+			life = life - otherChamp.attack + armor;
+		}
+		if (life < 0) {
+			life = 0;
 		}
 	}
 	
 	public String status() {
-		if (this.life == 0) {
-			return "teste2";
-			//return this.name + ": " + this.life + " de vida (morreu)";
+		if (life > 0) {
+			return name + ": " + life + "de vida";
 		} else {
-			return "teste1";
-			// return this.name + ": " + this.life + " de vida";
+			return name + ": " + life + "de vida (morreu)";
 		}
 	}
 
