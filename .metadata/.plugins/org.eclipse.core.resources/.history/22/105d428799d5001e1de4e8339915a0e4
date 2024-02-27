@@ -1,0 +1,62 @@
+package application;
+
+import java.util.Locale;
+import java.util.Scanner;
+
+import entities.Champion;
+
+public class Program {
+
+	public static void main(String[] args) {
+		
+		Locale.setDefault(Locale.US);
+		Scanner sc = new Scanner (System.in);
+		
+		System.out.println("Digite os dados do primeiro campeão: ");
+		System.out.println("Nome: ");
+		String name = sc.nextLine();
+		System.out.println("Vida inicial: ");
+		int life = sc.nextInt();
+		System.out.println("Ataque: ");
+		int attack = sc.nextInt();
+		System.out.println("Armadura: ");
+		int armor = sc.nextInt();
+		
+		Champion champ1 = new Champion(name, life, attack, armor);
+		
+		sc.nextLine(); // limpeza buffer
+		System.out.println("\nDigite os dados do segundo campeão: ");
+		System.out.println("Nome: ");
+		name = sc.nextLine();
+		System.out.println("Vida inicial: ");
+		life = sc.nextInt();
+		System.out.println("Ataque: ");
+		attack = sc.nextInt();
+		System.out.println("Armadura: ");
+		armor = sc.nextInt();
+		
+		Champion champ2 = new Champion(name, life, attack, armor);
+		
+		sc.nextLine(); // limpeza buffer
+		System.out.println("\nQuantos turnos você deseja executar? ");
+		int rounds = sc.nextInt();
+		sc.nextLine(); // limpeza buffer
+		
+		int i = 1;
+		while ((i <= rounds) || (champ1.getLife() > 0) || (champ2.getLife() > 0)) {
+			champ1.takeDamage(champ2);
+			champ2.takeDamage(champ1);
+			System.out.println("\nResultado do turno " + i + ": ");
+			System.out.println("Vida do campeão 1: " + champ1.getLife());
+			System.out.println("Vida do campeão 2: " + champ2.getLife());
+			champ1.status();
+			champ2.status();
+			i++;
+		}
+		
+		System.out.println("\nFIM DO COMBATE!");
+		;
+		sc.close();
+	}
+
+}

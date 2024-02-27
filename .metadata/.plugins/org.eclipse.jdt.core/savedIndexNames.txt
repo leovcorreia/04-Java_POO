@@ -1,0 +1,12 @@
+INDEX VERSION 1.134+C:\Geral\Programacao\DSLearn\FDM\04Java\.metadata\.plugins\org.eclipse.jdt.core
+1836350391.index
+1865797976.index
+3453313424.index
+675857577.index
+1452495928.index
+3468561750.index
+1028732945.index
+2515246822.index
+1682881778.index
+1959763525.index
+928064364.index

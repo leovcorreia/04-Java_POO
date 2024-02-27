@@ -1,0 +1,42 @@
+package application;
+
+import java.util.Locale;
+import java.util.Scanner;
+
+public class Program {
+
+	public static void main(String[] args) {
+		
+		Locale.setDefault(Locale.US);
+		Scanner sc = new Scanner (System.in);
+		
+		System.out.println("Digite os dados do primeiro campeão: ");
+		System.out.println("Nome: ");
+		String name = sc.nextLine();
+		System.out.println("Vida inicial: ");
+		int life = sc.nextInt();
+		System.out.println("Ataque: ");
+		int attack = sc.nextInt();
+		System.out.println("Armadura: ");
+		int armor = sc.nextInt();
+		
+		Champion champ1 = new Champion(name, life, attack, armor);
+		
+		System.out.println("\nDigite os dados do segundo campeão: ");
+		System.out.println("Nome: ");
+		name = sc.nextLine();
+		System.out.println("Vida inicial: ");
+		life = sc.nextInt();
+		System.out.println("Ataque: ");
+		attack = sc.nextInt();
+		System.out.println("Armadura: ");
+		armor = sc.nextInt();
+		
+		
+		
+		
+		;
+		sc.close();
+	}
+
+}
