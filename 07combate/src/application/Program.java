@@ -47,15 +47,13 @@ public class Program {
 			champ1.takeDamage(champ2);
 			champ2.takeDamage(champ1);
 			System.out.println("\nResultado do turno " + i + ": ");
-			// System.out.println("Vida do campeão 1: " + champ1.getLife());
-			// System.out.println("Vida do campeão 2: " + champ2.getLife());
-			champ1.status();
-			champ2.status();
+			System.out.println(champ1.status()); 
+			System.out.println(champ2.status()); 
 			i += 1;
 		}
 		
 		System.out.println("\nFIM DO COMBATE!");
-		;
+		
 		sc.close();
 	}
 
