@@ -14,6 +14,9 @@ public class Program {
 		
 		System.out.println("Quantas pessoas serao digitadas? ");
 		int n = sc.nextInt();
+		int age;
+		double height;
+		
 		sc.nextLine(); // Limpeza buffer
 		
 		Person[] vect = new Person[n];
@@ -27,11 +30,11 @@ public class Program {
 			String name = sc.nextLine();
 			
 			System.out.println("Idade: ");
-			int age = sc.nextInt();
+			age = sc.nextInt();
 			sc.nextLine(); // Limpeza buffer
 			
 			System.out.println("Altura: ");
-			double height = sc.nextDouble();
+			height = sc.nextDouble();
 				
 			vect[i] = new Person(name, age, height);
 			
@@ -40,17 +43,18 @@ public class Program {
 			}
 			
 			sum += vect[i].getHeight();
+			sc.nextLine(); // Limpeza buffer
 		}
 		
 		double avgHeight = sum / vect.length;
-		System.out.printf("\nAltura media: %.2f", avgHeight);
+		System.out.printf("\nAltura media: %.2f\n", avgHeight);
 		
-		double less16 = count / vect.length;
-		System.out.printf("Pessoas com menos de 16 anos: %.1f%", less16);
+		double less16 = (double) count / vect.length * 100;
+		System.out.printf("Pessoas com menos de 16 anos: %.1f %% \n", less16);
 		
 		for (int i = 0; i < vect.length; i++) {
 			if (vect[i].getAge() < 16) {
-				System.out.println("%s\n" + vect[i].getName());
+				System.out.printf("%s\n", vect[i].getName());
 			}
 		}
 		
