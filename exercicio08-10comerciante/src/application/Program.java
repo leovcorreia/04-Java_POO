@@ -60,11 +60,11 @@ public class Program {
 			totalProfit = sumSale - sumPurchase;
 		}
 		
-		System.out.printf("Lucro abaixo de 10%: %d\n", countLess10);
-		System.out.printf("Lucro entre 10% e 20%: %d\n", countBetween10_20);
-		System.out.printf("Lucro acima de 20%: %d\n", countMore20);
-		System.out.printf("Valor total de compra: %.2f", sumPurchase);
-		System.out.printf("Valor total de venda: %.2f", sumSale);
+		System.out.printf("Lucro abaixo de 10%%: %d\n", countLess10);
+		System.out.printf("Lucro entre 10%% e 20%%: %d\n", countBetween10_20);
+		System.out.printf("Lucro acima de 20%%: %d\n", countMore20);
+		System.out.printf("Valor total de compra: %.2f\n", sumPurchase);
+		System.out.printf("Valor total de venda: %.2f\n", sumSale);
 		System.out.printf("Lucro total: %.2f", totalProfit);
 		
 		sc.close();
