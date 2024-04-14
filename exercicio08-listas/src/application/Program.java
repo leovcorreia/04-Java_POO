@@ -39,10 +39,30 @@ public class Program {
 			list.add(i, employee);
 		}
 		
+		System.out.printf("\nEnter the employee id that will have salary increase: ");
+		int idIncrease = sc.nextInt();
+		sc.nextLine(); // Limpeza buffer
+		
+		boolean result = false;
 		for (Employees emp: list) {
-			System.out.printf("Id do funcionario: %d\n", emp.getId());
-			System.out.printf("Nome do funcionario: %s\n", emp.getName());
-			System.out.printf("Salario do funcionario: %.2f\n", emp.getSalary());
+			if (emp.getId() == idIncrease) {
+				System.out.printf("Enter the percentage: ");
+				double percentage = sc.nextDouble();
+				sc.nextLine(); // Limpeza buffer
+				
+				emp.increaseSalary(percentage);
+				result = true;
+			}
+		}
+		
+		if (!result) {
+			System.out.println("This id does not exist! ");
+		}
+	
+		System.out.println("\nList of employees: ");
+		
+		for (Employees emp: list) {
+			System.out.printf("%d, %s, %.2f \n", emp.getId(), emp.getName(), emp.getSalary());
 		}
 		
 		sc.close();
