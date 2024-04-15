@@ -25,6 +25,10 @@ public class Program {
 			
 			System.out.printf("Id: ");
 			int id = sc.nextInt();
+			while (hasId(list, id)) {
+				System.out.println("Id already taken! Try again: ");
+				id = sc.nextInt();
+			}
 			sc.nextLine(); // Limpeza buffer
 			
 			System.out.printf("Name: ");
@@ -66,6 +70,11 @@ public class Program {
 		}
 		
 		sc.close();
+	}
+	
+	public static boolean hasId(List<Employees> list, int id) {
+		Employees emp = list.stream().filter(x -> x.getId() == id).findFirst().orElse(null);
+		return emp != null;
 	}
 
 }
