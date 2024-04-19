@@ -28,5 +28,9 @@ public class OrderItem {
 	public void setPrice(Double price) {
 		this.price = price;
 	}
+	
+	public Double subTotal() {
+		return quantity * price;
+	}
 
 }
