@@ -2,9 +2,7 @@ package application;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -21,7 +19,6 @@ public class Program {
 		Locale.setDefault(Locale.US);
 		Scanner sc = new Scanner(System.in);
 		SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
-		List<OrderItem> itens = new ArrayList<>();
 		
 		System.out.println("Enter client data: ");
 		System.out.print("Name: ");
@@ -54,24 +51,18 @@ public class Program {
 			System.out.print("Product price: ");
 			Double productPrice = sc.nextDouble();
 			
+			Product product = new Product(productName, productPrice);
+			
 			System.out.print("Quantity: ");
 			Integer quantity = sc.nextInt();
 			sc.nextLine(); // Limpeza buffer
 			
-			Product product = new Product(productName, productPrice);
 			OrderItem item = new OrderItem(quantity, productPrice, product);
-			itens.add(item);
 			order.addItem(item);
 		}
 		
 		System.out.println("\nORDER SUMMARY: ");
 		System.out.println(order);
-		System.out.println("Client: " + client);
-		System.out.println("Order itens: ");
-		for (OrderItem item: itens) {
-			System.out.println(item);
-		}
-		System.out.println("Total price: $" + String.format("%.2f", order.total()));
 		
 		sc.close();
 	}
