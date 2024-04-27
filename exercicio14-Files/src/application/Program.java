@@ -6,8 +6,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+
+import entities.Product;
 
 public class Program {
 
@@ -16,24 +20,25 @@ public class Program {
 		Locale.setDefault(Locale.US);
 		Scanner sc = new Scanner(System.in);
 
-		System.out.print("How many items will be saved? ");
+		System.out.print("How many products will be saved? ");
 		int n = sc.nextInt();
 		sc.nextLine(); // Limpeza buffer
 		
-		String[] items = new String[n];
-		Double[] price = new Double[n];
+		List<Product> products = new ArrayList<>();
 		
+		System.out.println("Enter your products data: ");
 		// READING DATA FROM USER
 		for (int i = 0; i < n; i++) {
-			System.out.print("Enter your item data: ");
-			String item = sc.nextLine();
-			items = item.split(",");
-			price[i] = items;
-		}
-		
-		System.out.println("Split: ");
-		for (String palavra : items) {
-		    System.out.println(palavra);
+			System.out.print((i+1) + ") Product name: ");
+			String name = sc.nextLine();
+			System.out.print("Product price: ");
+			Double price = sc.nextDouble();
+			System.out.print("Product quantity: ");
+			Integer quantity = sc.nextInt();
+			sc.nextLine(); // Limpeza buffer
+			
+			Product product = new Product(name, price, quantity);
+			products.add(product);
 		}
 		
 		System.out.print("\nEnter the folder path: ");
@@ -43,17 +48,16 @@ public class Program {
 
 		// WRITING IN THE SOURCE FILE
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
-			for (int i = 1; i <= 3*n; i++) { // REPRESENTS THE ITEMS ARRAY
-				bw.write(items[i-1]);
-				if (i % 3 == 0) {
-					bw.newLine();
-				}
+			for (Product prod: products) {
+				bw.write(prod.getName() + "," + String.format("%.2f", prod.getPrice()) + "," + prod.getQuantity());
+				bw.newLine();
 			}
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		System.out.println("\nTHE FILE:");
+		/*System.out.println("\nTHE FILE:");
 		try (BufferedReader br = new BufferedReader(new FileReader(path))) {
 			String line = br.readLine();
 			while (line != null) {
@@ -62,13 +66,26 @@ public class Program {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 
 		String sourcePath = path.getParent();
 		new File(sourcePath + "\\out").mkdir(); // creating a subdirectory "out" in the source path
 
 		System.out.print("Enter the output file path: ");
-		String outPath = sc.nextLine();
+		String outStrPath = sc.nextLine();
+		
+		File outPath = new File(outStrPath);
+		
+		// WRITING IN THE OUTPUT FILE
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(outPath))) {
+			for (Product prod: products) {
+				bw.write(prod.getName() + "," + String.format("%.2f", prod.total()));
+				bw.newLine();
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		sc.close();
 	}
