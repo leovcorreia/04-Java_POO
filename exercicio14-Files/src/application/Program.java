@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -15,79 +16,74 @@ import entities.Product;
 
 public class Program {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ParseException {
 
 		Locale.setDefault(Locale.US);
 		Scanner sc = new Scanner(System.in);
 
+		List<Product> list = new ArrayList<>();
+		
 		System.out.print("How many products will be saved? ");
 		int n = sc.nextInt();
-		sc.nextLine(); // Limpeza buffer
+		sc.nextLine();
 		
-		List<Product> products = new ArrayList<>();
+		System.out.print("Enter the folder path: ");
+		String sourceStrFile = sc.nextLine();
 		
-		System.out.println("Enter your products data: ");
-		// READING DATA FROM USER
-		for (int i = 0; i < n; i++) {
-			System.out.print((i+1) + ") Product name: ");
-			String name = sc.nextLine();
-			System.out.print("Product price: ");
-			Double price = sc.nextDouble();
-			System.out.print("Product quantity: ");
-			Integer quantity = sc.nextInt();
-			sc.nextLine(); // Limpeza buffer
-			
-			Product product = new Product(name, price, quantity);
-			products.add(product);
-		}
+		File sourcePathFile = new File(sourceStrFile);
 		
-		System.out.print("\nEnter the folder path: ");
-		String strPath = sc.nextLine();
-
-		File path = new File(strPath);
-
+		String sourceStrFolder = sourcePathFile.getParent();
+		boolean success = new File(sourceStrFolder + "\\out").mkdir();
+		
+		String targetStrFile = sourceStrFolder + "\\out\\summary.csv";
+	
 		// WRITING IN THE SOURCE FILE
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
-			for (Product prod: products) {
-				bw.write(prod.getName() + "," + String.format("%.2f", prod.getPrice()) + "," + prod.getQuantity());
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(sourceStrFile))){
+			for (int i = 0; i < n; i++) {
+				System.out.print("Enter your " + (i+1) + ") product data: ");
+				String product = sc.nextLine();
+				bw.write(product);
 				bw.newLine();
 			}
 		}
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		/*System.out.println("\nTHE FILE:");
-		try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-			String line = br.readLine();
-			while (line != null) {
-				System.out.println(line);
-				line = br.readLine();
+		
+		// READING THE SOURCE FILE AND WRITING IN THE TARGET FILE
+		try (BufferedReader br = new BufferedReader(new FileReader(sourceStrFile))) {
+			
+			String item = br.readLine();
+			while (item != null) {
+				String[] fields = item.split(",");
+				String name = fields[0];
+				Double price = Double.parseDouble(fields[1]);
+				Integer quantity = Integer.parseInt(fields[2]);
+				
+				Product prod = new Product(name, price, quantity);
+				list.add(prod);
+				
+				item = br.readLine();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
-
-		String sourcePath = path.getParent();
-		new File(sourcePath + "\\out").mkdir(); // creating a subdirectory "out" in the source path
-
-		System.out.print("Enter the output file path: ");
-		String outStrPath = sc.nextLine();
-		
-		File outPath = new File(outStrPath);
-		
-		// WRITING IN THE OUTPUT FILE
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter(outPath))) {
-			for (Product prod: products) {
-				bw.write(prod.getName() + "," + String.format("%.2f", prod.total()));
-				bw.newLine();
+			
+			try (BufferedWriter bw = new BufferedWriter(new FileWriter(targetStrFile))) {
+				// WRITING IN THE TARGET FILE 
+				for (Product prod: list) {
+					bw.write(prod.getName() + "," + String.format("%.2f", prod.total()));
+					bw.newLine();
+				}
+				
+				System.out.println(targetStrFile + " CREATED!");
+				
+			}
+			catch (IOException e) {
+				System.out.println("Error writing file: " + e.getMessage());
 			}
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Error reading file: " + e.getMessage());
 		}
 		
 		sc.close();
 	}
-
 }
