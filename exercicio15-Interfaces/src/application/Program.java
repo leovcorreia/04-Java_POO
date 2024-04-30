@@ -1,8 +1,7 @@
 package application;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -15,17 +14,18 @@ public class Program {
 
 	public static void main(String[] args) {
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		
 		Locale.setDefault(Locale.US);
 		Scanner sc = new Scanner(System.in);
+		
+		DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		
 		try {
 			System.out.println("Enter the contract data: ");
 			System.out.print("Number: ");
 			Integer contractNumber = sc.nextInt();
+			sc.nextLine(); // Limpeza buffer
 			System.out.print("Date (dd/MM/yyyy): ");
-			Date contractDate = sdf.parse(sc.next());
+			LocalDate contractDate = LocalDate.parse(sc.nextLine(), fmt);
 			System.out.print("Contract value: ");
 			Double contractTotalValue = sc.nextDouble();
 			
@@ -35,20 +35,16 @@ public class Program {
 			Integer installmentsNumber = sc.nextInt();
 			
 			ContractService service = new ContractService(new PaypalService());
-			int i = 0;
-			while (i < installmentsNumber) {
-				service.processContract(contract, installmentsNumber);
-				i++;
-			}
-			
+			service.processContract(contract, installmentsNumber);
+		
 			System.out.println("Installments: ");
 			for (Installment installment: contract.getInstallments()) {
-				System.out.println(sdf.format(installment.getDueDate()) + " - " + String.format("%.2f", installment.getAmount()));
+				System.out.println(installment);
 			}
 			
 		}
-		catch (ParseException e) {
-			System.out.println("Error: " + e.getMessage());
+		catch (RuntimeException e) {
+			System.out.println("Unexpected error!");
 		}
 		
 		sc.close();
