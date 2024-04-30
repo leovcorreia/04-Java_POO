@@ -25,6 +25,6 @@ public class ContractService {
 		Installment installment = new Installment(contract.getDate(), installmentValue);
 		contract.addInstallment(installment);
 		
-	}
+	}	
 
 }
