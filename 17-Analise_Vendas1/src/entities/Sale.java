@@ -59,7 +59,20 @@ public class Sale {
 		this.total = total;
 	}
 	
-	// AVERAGE PRICE METHOD
-	// TOSTRING METHOD
+	public Double averagePrice() {
+		return total / items;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(month + "/");
+		sb.append(year + ", ");
+		sb.append(seller + ", ");
+		sb.append(items + ", ");
+		sb.append(total + ", ");
+		sb.append("pm = " + String.format("%.2f", averagePrice()));
+		return sb.toString();
+	}
 	
 }
