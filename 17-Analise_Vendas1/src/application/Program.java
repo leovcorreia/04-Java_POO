@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
@@ -33,15 +34,13 @@ public class Program {
 				line = br.readLine();
 			}
 			
-			Comparator<Double> comp = (x, y) -> x.averagePrice().compareTo(y.averagePrice());
-			
 			List<Sale> sales2016 = list.stream()
 								.filter(x -> x.getYear() == 2016)
-								.sorted(comp.reversed())
+								.sorted(Comparator.comparing(Sale::averagePrice).reversed())
 								.limit(5)
 								.collect(Collectors.toList());
 			
-			System.out.println("Cinco primeiras vendas de 2016 de maior preço médio: ");
+			System.out.println("\nCinco primeiras vendas de 2016 de maior preço médio: ");
 			sales2016.forEach(System.out::println);
 			
 			double totalValue = list.stream()
@@ -50,7 +49,7 @@ public class Program {
 								.map(sale -> sale.getTotal())
 								.reduce(0.0, (x, y) -> x + y);
 								
-			System.out.println("Valor total vendido pelo vendedor Logan nos meses 1 e 7 = " + 
+			System.out.println("\nValor total vendido pelo vendedor Logan nos meses 1 e 7 = " + 
 			String.format("%.2f", totalValue));
 			
 		} catch(IOException e) {
