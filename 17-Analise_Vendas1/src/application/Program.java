@@ -32,7 +32,7 @@ public class Program {
 						, Integer.parseInt(fields[3]), Double.parseDouble(fields[4])));				
 				line = br.readLine();
 			}
-			/*
+			
 			Comparator<Double> comp = (x, y) -> x.averagePrice().compareTo(y.averagePrice());
 			
 			List<Sale> sales2016 = list.stream()
@@ -43,11 +43,11 @@ public class Program {
 			
 			System.out.println("Cinco primeiras vendas de 2016 de maior preço médio: ");
 			sales2016.forEach(System.out::println);
-			*/
+			
 			double totalValue = list.stream()
-								.filter(x -> x.getSeller() == "Logan")
-								.filter(x -> x.getMonth() == 1)
-								.map(x -> x.getTotal())
+								.filter(sale -> sale.getSeller().equals("Logan"))
+								.filter(sale -> sale.getMonth() == 1 || sale.getMonth() == 7)
+								.map(sale -> sale.getTotal())
 								.reduce(0.0, (x, y) -> x + y);
 								
 			System.out.println("Valor total vendido pelo vendedor Logan nos meses 1 e 7 = " + 
