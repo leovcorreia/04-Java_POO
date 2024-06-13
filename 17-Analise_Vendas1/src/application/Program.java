@@ -32,19 +32,26 @@ public class Program {
 						, Integer.parseInt(fields[3]), Double.parseDouble(fields[4])));				
 				line = br.readLine();
 			}
+			/*
+			Comparator<Double> comp = (x, y) -> x.averagePrice().compareTo(y.averagePrice());
 			
-			Comparator<Double> comp = (x, y) -> x.averagePrice.compareTo(y.averagePrice());
-			
-			List<String> sales2016 = list.stream()
+			List<Sale> sales2016 = list.stream()
 								.filter(x -> x.getYear() == 2016)
-								.map(x -> x.averagePrice())
 								.sorted(comp.reversed())
 								.limit(5)
 								.collect(Collectors.toList());
 			
 			System.out.println("Cinco primeiras vendas de 2016 de maior preço médio: ");
 			sales2016.forEach(System.out::println);
+			*/
+			double totalValue = list.stream()
+								.filter(x -> x.getSeller() == "Logan")
+								.filter(x -> x.getMonth() == 1)
+								.map(x -> x.getTotal())
+								.reduce(0.0, (x, y) -> x + y);
 								
+			System.out.println("Valor total vendido pelo vendedor Logan nos meses 1 e 7 = " + 
+			String.format("%.2f", totalValue));
 			
 		} catch(IOException e) {
 			System.out.println("Erro: " + e);

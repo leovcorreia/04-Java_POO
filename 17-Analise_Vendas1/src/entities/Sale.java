@@ -1,6 +1,6 @@
 package entities;
 
-public class Sale {
+public class Sale{
 	
 	private Integer month;
 	private Integer year;
@@ -74,5 +74,5 @@ public class Sale {
 		sb.append("pm = " + String.format("%.2f", averagePrice()));
 		return sb.toString();
 	}
-	
+
 }
