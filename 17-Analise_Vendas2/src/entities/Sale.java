@@ -63,9 +63,9 @@ public class Sale {
 		return total / items;
 	}
 	
-	@Override
+	/*@Override
 	public String toString() {
 		return seller + " - R$ " + String.format("%.2f", );
-	}
+	}*/
 	
 }
