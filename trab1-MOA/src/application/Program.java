@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Scanner;
 
+import entities.Item;
+
 public class Program {
 
 	public static void main(String[] args) {
@@ -20,9 +22,31 @@ public class Program {
 			
 			String line = br.readLine();
 			while (line != null) {
-				String[] fields = line.split(" ");
-				int qtdMochilas = Integer.parseInt(fields[0]);
+				// LÊ A QUANTIDADE DE MOCHILAS
+				int qtdMochilas = Integer.parseInt(line);
+				int[] capacidadesMochila = new int[qtdMochilas];
+				
+				// LÊ A QUANTIDADE DE ITENS
 				line = br.readLine();
+				int qtdItens = Integer.parseInt(line);
+				
+				// LÊ A CAPACIDADE DE CADA MOCHILA E GUARDA EM UM VETOR
+				for (int i = 0; i < qtdMochilas; i++) {
+					line = br.readLine();
+					capacidadesMochila[i] = Integer.parseInt(line);
+				}
+				
+				// LÊ PESO E VALOR DE CADA ITEM, CRIA O OBJETO ITEM E GUARDA EM UM VETOR DO TIPO ITEM
+				Item[] arrayItens = new Item[qtdItens];
+				for (int i = 0; i < qtdItens; i++) {
+					line = br.readLine();
+					String[] fields = line.split("\\s+");
+					
+					int peso = Integer.parseInt(fields[0]);
+					int valor = Integer.parseInt(fields[1]);
+					arrayItens[i] = new Item(peso, valor);
+				}
+				
 			}
 			
 		} catch (IOException e) {
