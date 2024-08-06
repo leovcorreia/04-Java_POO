@@ -79,5 +79,37 @@ public class Program {
 
         return funcObjetivo.toString();
 	}
+	
+	public static String montarRestrições(Item[] arrayItens, int qtdItens, int qtdMochilas, int[] capacidadesMochilas) {
+	    StringBuilder restricoesCapacidade = new StringBuilder();
+
+	    // Itera sobre cada mochila
+	    for (int j = 0; j < qtdMochilas; j++) {
+	        // Adiciona a restrição para a mochila j
+	        if (j > 0) {
+	            restricoesCapacidade.append("\n");
+	        }
+	        restricoesCapacidade.append("s.a. mochila").append(j).append(": ");
+	        
+	        // Adiciona a soma dos pesos dos itens na mochila j
+	        for (int i = 0; i < qtdItens; i++) {
+	            if (i > 0) {
+	                restricoesCapacidade.append(" + ");
+	            }
+	            restricoesCapacidade.append(arrayItens[i].getWeight()).append(" * x").append(i).append("_").append(j);
+	        }
+	        
+	        // Adiciona a capacidade máxima da mochila
+	        restricoesCapacidade.append(" <= ").append(capacidadesMochilas[j]);
+	        
+	        // Exemplo de comi ficaria:
+	        // s.t. mochila0: 10 * x0_0 + 20 * x1_0 + 15 * x2_0 <= 50
+	        // s.t. mochila1: 10 * x0_1 + 20 * x1_1 + 15 * x2_1 <= 70
+
+	    }
+
+	    return restricoesCapacidade.toString();
+	}
+
 
 }
