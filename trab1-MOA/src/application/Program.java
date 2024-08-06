@@ -45,9 +45,12 @@ public class Program {
 				int valor = Integer.parseInt(fields[1]);
 				arrayItens[i] = new Item(peso, valor);
 			}
-				
+			
+			// MATRIZ QUE TERÁ 1 CASO ITEM I ESTIVER NA MOCHILA J; TERÁ 0, CASO CONTRÁRIO
 			int[][] matStatus = new int[qtdItens][qtdMochilas]; 
-			int funcObjetivo = funcaoObjetivo(arrayItens, qtdItens, qtdMochilas, matStatus);
+			
+			String funcObjetivo = montarFuncaoObjetivo(arrayItens, qtdItens, qtdMochilas);
+			System.out.println("Função objetivo: " + funcObjetivo);
 			
 		} catch (IOException e) {
 			System.out.println("Erro: " + e);
@@ -56,12 +59,25 @@ public class Program {
 		sc.close();
 	}
 	
-	public static int funcaoObjetivo(Item[] arrayItens, int qtdItens, int qtdMochilas, int[][] matStatus) {
-		for (int i = 0; i < ; i++) {
-			for (int j = 0; j < ; j++) {
-				
-			}
-		}
+	public static String montarFuncaoObjetivo(Item[] arrayItens, int qtdItens, int qtdMochilas) {
+		StringBuilder funcObjetivo = new StringBuilder("maximize: ");
+
+        for (int i = 0; i < qtdItens; i++) {
+            for (int j = 0; j < qtdMochilas; j++) {
+                if (i > 0 || j > 0) {
+                    funcObjetivo.append(" + ");
+                }
+                funcObjetivo.append(arrayItens[i].getValue())
+                	.append(" * x")
+                	.append(i)
+                	.append("_")
+                	.append(j);
+                // Exemplo de como ficaria:
+                // maximize: 10 * x0_0 + 10 * x0_1 + 15 * x1_0 + 15 * x1_1
+            }
+        }
+
+        return funcObjetivo.toString();
 	}
 
 }
