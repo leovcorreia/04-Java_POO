@@ -50,7 +50,16 @@ public class Program {
 			int[][] matStatus = new int[qtdItens][qtdMochilas]; 
 			
 			String funcObjetivo = montarFuncaoObjetivo(arrayItens, qtdItens, qtdMochilas);
-			System.out.println("Função objetivo: " + funcObjetivo);
+			System.out.println("Função objetivo: \n" + funcObjetivo);
+			
+			String restricoesCapacidade = montarRestriçõesCapacidade(arrayItens, qtdItens, qtdMochilas, capacidadesMochila);
+            System.out.println("\nRestrições das capacidades das mochilas:\n" + restricoesCapacidade);
+            
+            String restricoesUnicidade = montarRestricoesUnicidade(qtdItens, qtdMochilas);
+            System.out.println("\nRestrições de unicidade de cada item:\n" + restricoesUnicidade);
+            
+            String restricoesBinarias = montarRestricoesBinarias(qtdItens, qtdMochilas);
+            System.out.println("\nRestrições binárias:\n" + restricoesBinarias);
 			
 		} catch (IOException e) {
 			System.out.println("Erro: " + e);
@@ -80,7 +89,7 @@ public class Program {
         return funcObjetivo.toString();
 	}
 	
-	public static String montarRestrições(Item[] arrayItens, int qtdItens, int qtdMochilas, int[] capacidadesMochilas) {
+	public static String montarRestriçõesCapacidade(Item[] arrayItens, int qtdItens, int qtdMochilas, int[] capacidadesMochilas) {
 	    StringBuilder restricoesCapacidade = new StringBuilder();
 
 	    // Itera sobre cada mochila
@@ -111,5 +120,59 @@ public class Program {
 	    return restricoesCapacidade.toString();
 	}
 
+	public static String montarRestricoesUnicidade(int qtdItens, int qtdMochilas) {
+	    StringBuilder restricoesUnicidade = new StringBuilder();
+
+	    // Itera sobre cada item
+	    for (int i = 0; i < qtdItens; i++) {
+	        // Adiciona a restrição para o item i
+	        if (i > 0) {
+	            restricoesUnicidade.append("\n");
+	        }
+	        restricoesUnicidade.append("s.a. unicidade_item").append(i).append(": ");
+	        
+	        // Adiciona a soma das variáveis de decisão para o item i
+	        for (int j = 0; j < qtdMochilas; j++) {
+	            if (j > 0) {
+	                restricoesUnicidade.append(" + ");
+	            }
+	            restricoesUnicidade.append("x").append(i).append("_").append(j);
+	        }
+	        
+	        // Adiciona a restrição de unicidade
+	        restricoesUnicidade.append(" <= 1");
+	        
+	        // Exemplo de como ficaria:
+	        // s.a. unicidade_item0: x0_0 + x0_1 <= 1
+	        // s.a. unicidade_item1: x1_0 + x1_1 <= 1
+	        // s.a. unicidade_item2: x2_0 + x2_1 <= 1
+	    }
+
+	    return restricoesUnicidade.toString();
+	}
+
+	public static String montarRestricoesBinarias(int qtdItens, int qtdMochilas) {
+	    StringBuilder restricoesBinarias = new StringBuilder();
+
+	    for (int i = 0; i < qtdItens; i++) {
+	        for (int j = 0; j < qtdMochilas; j++) {
+	            if (restricoesBinarias.length() > 0) {
+	                restricoesBinarias.append("\n");
+	            }
+	            restricoesBinarias.append("bin x").append(i).append("_").append(j);
+	        }
+	    }
+
+	    return restricoesBinarias.toString();
+	    
+	    /*Exemplo de como ficaria:
+	    bin x0_0
+	    bin x0_1
+	    bin x1_0
+	    bin x1_1
+	    bin x2_0
+	    bin x2_1
+	    */
+	}
 
 }
