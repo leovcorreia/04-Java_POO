@@ -60,6 +60,14 @@ public class Program {
             // Criar o LinearProgram com a função objetivo
             LinearProgram lp = new LinearProgram(coeficientesObjetivo);
 
+            // Configurar o problema como de maximização
+            lp.setMinProblem(false);  // Maximizar
+
+            // Definir variáveis como binárias (inteiras 0 ou 1)
+            for (int i = 0; i < numVariaveis; i++) {
+                lp.setBinary(i);
+            }
+
             // Adicionar restrições de capacidade
             for (int j = 0; j < qtdMochilas; j++) {
                 double[] coeficientes = new double[numVariaveis];
@@ -73,13 +81,10 @@ public class Program {
             for (int i = 0; i < qtdItens; i++) {
                 double[] coeficientes = new double[numVariaveis];
                 for (int j = 0; j < qtdMochilas; j++) {
-                    coeficientes[i + j * qtdItens] = 1;
+                    coeficientes[i + j * qtdItens] = 1; // Garantir que cada item só possa estar em uma mochila
                 }
                 lp.addConstraint(new LinearSmallerThanEqualsConstraint(coeficientes, 1, "c_unicidade" + i));
             }
-
-            // Configurar o problema como de maximização
-            lp.setMinProblem(false);  // Maximizar
 
             // Resolver o problema
             LinearProgramSolver solver = SolverFactory.newDefault();
