@@ -100,7 +100,9 @@ public class Program {
             long solverTime = endSolverTime - startSolverTime;
 
             int valorTotal = 0;
-
+            
+            System.out.println("=====================================");
+            System.out.println("Solução Detalhada: ");
             // Verificar a solução e imprimir a soma dos pesos e valores em cada mochila
             for (int j = 0; j < qtdMochilas; j++) {
                 int somaPesos = 0;
@@ -120,14 +122,26 @@ public class Program {
                     System.out.println("** Violação da capacidade da mochila " + j + " **");
                 }
             }
-
-            // Exibir o valor total
+            
+            System.out.println("=====================================");
+         // Imprimir a solução onde os valores são iguais a 1
+            System.out.println("Solução Geral: ");
+            for (int j = 0; j < qtdMochilas; j++) {
+                for (int i = 0; i < qtdItens; i++) {
+                    if (sol[i + j * qtdItens] == 1.0) {
+                        System.out.println("Item " + i + " alocado na Mochila " + j + " (x" + i + "_" + j + " = 1)");
+                    }
+                }
+            }
+            System.out.println("=====================================");
+            
+         // Exibir o valor total
             System.out.println("Valor total dos itens selecionados: " + valorTotal);
-
+            
             // Exibir o relatório de desempenho do solver
             System.out.println("=====================================");
-            System.out.println("Relatório de Desempenho do Solver");
-            System.out.println("Tempo total de execução do solver: " + String.format("%.2f", (solverTime / 1_000_000_000.0)) + " segundos");
+            System.out.println("Relatório de Desempenho do Solver:");
+            System.out.println("Tempo total de execução do solver = " + String.format("%.2f", (solverTime / 1_000_000_000.0)) + " segundos");
             System.out.println("=====================================");
 
         } catch (IOException e) {
