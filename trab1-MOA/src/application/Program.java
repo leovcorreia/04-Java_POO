@@ -16,13 +16,14 @@ import entities.Item;
 public class Program {
 
     public static void main(String[] args) {
-        
+
         Locale.setDefault(Locale.US);
         Scanner sc = new Scanner(System.in);
         
         System.out.println("Entre com o caminho do arquivo de entrada: ");
         String path = sc.nextLine();
         
+        // Leitura dos dados do arquivo de entrada/instância
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             
             String line = br.readLine();
@@ -85,9 +86,18 @@ public class Program {
                 lp.addConstraint(new LinearSmallerThanEqualsConstraint(coeficientes, 1, "c_unicidade" + i));
             }
 
-            // Resolver o problema utilizando o solver padrão (esperando que seja o GLPK)
-            LinearProgramSolver solver = SolverFactory.newDefault();  // Uso do solver padrão
+            // Marca o início do tempo de execução do solver
+            long startSolverTime = System.nanoTime();
+
+            // Resolver o problema utilizando o solver padrão 
+            LinearProgramSolver solver = SolverFactory.newDefault();  // Uso do solver padrão GLPK
             double[] sol = solver.solve(lp);
+
+            // Marca o final do tempo de execução do solver
+            long endSolverTime = System.nanoTime();
+
+            // Calcula o tempo total de execução do solver
+            long solverTime = endSolverTime - startSolverTime;
 
             int valorTotal = 0;
 
@@ -114,15 +124,11 @@ public class Program {
             // Exibir o valor total
             System.out.println("Valor total dos itens selecionados: " + valorTotal);
 
-            // Exibir a solução
-            System.out.println("Solução: ");
-            for (int j = 0; j < qtdMochilas; j++) {
-                for (int i = 0; i < qtdItens; i++) {
-                    if (sol[i + j * qtdItens] == 1.0) {
-                        System.out.println("Item " + i + " alocado na Mochila " + j + " (x" + i + "_" + j + " = 1)");
-                    }
-                }
-            }
+            // Exibir o relatório de desempenho do solver
+            System.out.println("=====================================");
+            System.out.println("Relatório de Desempenho do Solver");
+            System.out.println("Tempo total de execução do solver: " + String.format("%.2f", (solverTime / 1_000_000_000.0)) + " segundos");
+            System.out.println("=====================================");
 
         } catch (IOException e) {
             System.out.println("Erro: " + e);
