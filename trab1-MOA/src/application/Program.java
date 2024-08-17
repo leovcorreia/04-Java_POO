@@ -1,6 +1,5 @@
 package application;
 
-import scpsolver.constraints.LinearBiggerThanEqualsConstraint;
 import scpsolver.constraints.LinearSmallerThanEqualsConstraint;
 import scpsolver.lpsolver.LinearProgramSolver;
 import scpsolver.lpsolver.SolverFactory;
@@ -86,14 +85,43 @@ public class Program {
                 lp.addConstraint(new LinearSmallerThanEqualsConstraint(coeficientes, 1, "c_unicidade" + i));
             }
 
-            // Resolver o problema
-            LinearProgramSolver solver = SolverFactory.newDefault();
+            // Resolver o problema utilizando o solver padrão (esperando que seja o GLPK)
+            LinearProgramSolver solver = SolverFactory.newDefault();  // Uso do solver padrão
             double[] sol = solver.solve(lp);
+
+            int valorTotal = 0;
+
+            // Verificar a solução e imprimir a soma dos pesos e valores em cada mochila
+            for (int j = 0; j < qtdMochilas; j++) {
+                int somaPesos = 0;
+                int somaValores = 0;
+                System.out.println("Mochila " + j + " - Capacidade: " + capacidadesMochila[j]);
+                for (int i = 0; i < qtdItens; i++) {
+                    if (sol[i + j * qtdItens] == 1.0) {
+                        somaPesos += arrayItens[i].getWeight();
+                        somaValores += arrayItens[i].getValue();
+                        System.out.println("  Item " + i + " (Peso: " + arrayItens[i].getWeight() + ", Valor: " + arrayItens[i].getValue() + ")");
+                    }
+                }
+                System.out.println("  Soma dos Pesos: " + somaPesos);
+                System.out.println("  Soma dos Valores: " + somaValores);
+                valorTotal += somaValores;
+                if (somaPesos > capacidadesMochila[j]) {
+                    System.out.println("** Violação da capacidade da mochila " + j + " **");
+                }
+            }
+
+            // Exibir o valor total
+            System.out.println("Valor total dos itens selecionados: " + valorTotal);
 
             // Exibir a solução
             System.out.println("Solução: ");
-            for (int i = 0; i < sol.length; i++) {
-                System.out.println("x" + (i / qtdMochilas) + "_" + (i % qtdMochilas) + " = " + sol[i]);
+            for (int j = 0; j < qtdMochilas; j++) {
+                for (int i = 0; i < qtdItens; i++) {
+                    if (sol[i + j * qtdItens] == 1.0) {
+                        System.out.println("Item " + i + " alocado na Mochila " + j + " (x" + i + "_" + j + " = 1)");
+                    }
+                }
             }
 
         } catch (IOException e) {
