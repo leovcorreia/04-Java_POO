@@ -1,16 +1,10 @@
 package application;
 
-import scpsolver.constraints.LinearSmallerThanEqualsConstraint;
-import scpsolver.lpsolver.LinearProgramSolver;
-import scpsolver.lpsolver.SolverFactory;
-import scpsolver.problems.LinearProgram;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Scanner;
-
 import entities.Item;
 
 public class Program {
@@ -19,135 +13,184 @@ public class Program {
 
         Locale.setDefault(Locale.US);
         Scanner sc = new Scanner(System.in);
-        
+
         System.out.println("Entre com o caminho do arquivo de entrada: ");
         String path = sc.nextLine();
-        
-        // Leitura dos dados do arquivo de entrada/instância
+
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-            
+
             String line = br.readLine();
             int qtdMochilas = Integer.parseInt(line);
             int[] capacidadesMochila = new int[qtdMochilas];
-                
+
             line = br.readLine();
             int qtdItens = Integer.parseInt(line);
-                
+
             for (int i = 0; i < qtdMochilas; i++) {
                 line = br.readLine();
                 capacidadesMochila[i] = Integer.parseInt(line);
             }
-                
+
             Item[] arrayItens = new Item[qtdItens];
             for (int i = 0; i < qtdItens; i++) {
                 line = br.readLine();
                 String[] fields = line.split("\\s+");
-                    
+
                 int peso = Integer.parseInt(fields[0]);
                 int valor = Integer.parseInt(fields[1]);
                 arrayItens[i] = new Item(peso, valor);
             }
-            
-            // Criar o problema com SCPSolver
-            int numVariaveis = qtdItens * qtdMochilas;
-            double[] coeficientesObjetivo = new double[numVariaveis];
-            for (int i = 0; i < qtdItens; i++) {
-                for (int j = 0; j < qtdMochilas; j++) {
-                    coeficientesObjetivo[i + j * qtdItens] = arrayItens[i].getValue();
+
+            // Parâmetros do GRASP
+            int numIteracoes = 10000; // Número de iterações do GRASP
+            int valorMaximo = 0;
+            int[] melhorSolucao = null;
+
+            // Início do tempo de execução do GRASP
+            long startGraspTime = System.nanoTime();
+
+            for (int it = 0; it < numIteracoes; it++) {
+                System.out.println("Iteração " + (it + 1) + " de " + numIteracoes);
+                int[] solucao = construirSolucaoGulosaAleatoria(arrayItens, capacidadesMochila.clone());
+                System.out.println("Solução inicial construída.");
+                solucao = buscaLocal(solucao, arrayItens, capacidadesMochila.clone());
+                int valorAtual = calcularValor(solucao, arrayItens);
+
+                if (valorAtual > valorMaximo) {
+                    valorMaximo = valorAtual;
+                    melhorSolucao = solucao.clone();
                 }
             }
 
-            // Criar o LinearProgram com a função objetivo
-            LinearProgram lp = new LinearProgram(coeficientesObjetivo);
+            long endGraspTime = System.nanoTime();
+            long graspTime = endGraspTime - startGraspTime;
 
-            // Configurar o problema como de maximização
-            lp.setMinProblem(false);  // Maximizar
+            imprimirSolucao(melhorSolucao, arrayItens, capacidadesMochila, valorMaximo);
 
-            // Definir variáveis como binárias (inteiras 0 ou 1)
-            for (int i = 0; i < numVariaveis; i++) {
-                lp.setBinary(i);
-            }
-
-            // Adicionar restrições de capacidade
-            for (int j = 0; j < qtdMochilas; j++) {
-                double[] coeficientes = new double[numVariaveis];
-                for (int i = 0; i < qtdItens; i++) {
-                    coeficientes[i + j * qtdItens] = arrayItens[i].getWeight();
-                }
-                lp.addConstraint(new LinearSmallerThanEqualsConstraint(coeficientes, capacidadesMochila[j], "c_mochila" + j));
-            }
-
-            // Adicionar restrições de unicidade
-            for (int i = 0; i < qtdItens; i++) {
-                double[] coeficientes = new double[numVariaveis];
-                for (int j = 0; j < qtdMochilas; j++) {
-                    coeficientes[i + j * qtdItens] = 1; // Garantir que cada item só possa estar em uma mochila
-                }
-                lp.addConstraint(new LinearSmallerThanEqualsConstraint(coeficientes, 1, "c_unicidade" + i));
-            }
-
-            // Marca o início do tempo de execução do solver
-            long startSolverTime = System.nanoTime();
-
-            // Resolver o problema utilizando o solver padrão 
-            LinearProgramSolver solver = SolverFactory.newDefault();  // Uso do solver padrão GLPK
-            double[] sol = solver.solve(lp);
-
-            // Marca o final do tempo de execução do solver
-            long endSolverTime = System.nanoTime();
-
-            // Calcula o tempo total de execução do solver
-            long solverTime = endSolverTime - startSolverTime;
-
-            int valorTotal = 0;
-            
             System.out.println("=====================================");
-            System.out.println("Solução Detalhada: ");
-            // Verificar a solução e imprimir a soma dos pesos e valores em cada mochila
-            for (int j = 0; j < qtdMochilas; j++) {
-                int somaPesos = 0;
-                int somaValores = 0;
-                System.out.println("Mochila " + j + " - Capacidade: " + capacidadesMochila[j]);
-                for (int i = 0; i < qtdItens; i++) {
-                    if (sol[i + j * qtdItens] == 1.0) {
-                        somaPesos += arrayItens[i].getWeight();
-                        somaValores += arrayItens[i].getValue();
-                        System.out.println("  Item " + i + " (Peso: " + arrayItens[i].getWeight() + ", Valor: " + arrayItens[i].getValue() + ")");
-                    }
-                }
-                System.out.println("  Soma dos Pesos: " + somaPesos);
-                System.out.println("  Soma dos Valores: " + somaValores);
-                valorTotal += somaValores;
-                if (somaPesos > capacidadesMochila[j]) {
-                    System.out.println("** Violação da capacidade da mochila " + j + " **");
-                }
-            }
-            
-            System.out.println("=====================================");
-         // Imprimir a solução onde os valores são iguais a 1
-            System.out.println("Solução Geral: ");
-            for (int j = 0; j < qtdMochilas; j++) {
-                for (int i = 0; i < qtdItens; i++) {
-                    if (sol[i + j * qtdItens] == 1.0) {
-                        System.out.println("Item " + i + " alocado na Mochila " + j + " (x" + i + "_" + j + " = 1)");
-                    }
-                }
-            }
-            System.out.println("=====================================");
-            
-         // Exibir o valor total
-            System.out.println("Valor total dos itens selecionados: " + valorTotal);
-            
-            // Exibir o relatório de desempenho do solver
-            System.out.println("=====================================");
-            System.out.println("Relatório de Desempenho do Solver:");
-            System.out.println("Tempo total de execução do solver = " + String.format("%.2f", (solverTime / 1_000_000_000.0)) + " segundos");
+            System.out.println("Relatório de Desempenho do GRASP:");
+            System.out.println("Tempo total de execução do GRASP = " + String.format("%.2f", (graspTime / 1_000_000_000.0)) + " segundos");
             System.out.println("=====================================");
 
         } catch (IOException e) {
             System.out.println("Erro: " + e);
         }
-        
+
         sc.close();
+    }
+
+    private static int[] construirSolucaoGulosaAleatoria(Item[] itens, int[] capacidadesMochila) {
+        int numItens = itens.length;
+        int numMochilas = capacidadesMochila.length;
+        int[] solucao = new int[numItens * numMochilas];
+
+        for (int i = 0; i < numItens; i++) {
+            for (int j = 0; j < numMochilas; j++) {
+                if (capacidadesMochila[j] >= itens[i].getWeight()) {
+                    solucao[i + j * numItens] = 1;
+                    capacidadesMochila[j] -= itens[i].getWeight();
+                    break;
+                }
+            }
+        }
+
+        return solucao;
+    }
+
+    private static int[] buscaLocal(int[] solucao, Item[] itens, int[] capacidadesMochila) {
+        boolean melhoriaEncontrada;
+        int numItens = itens.length;
+        int numMochilas = capacidadesMochila.length;
+
+        do {
+            melhoriaEncontrada = false;
+
+            for (int i = 0; i < numItens; i++) {
+                int mochilaAtual = -1;
+                for (int j = 0; j < numMochilas; j++) {
+                    if (solucao[i + j * numItens] == 1) {
+                        mochilaAtual = j;
+                        break;
+                    }
+                }
+
+                if (mochilaAtual == -1) continue;
+
+                for (int j = 0; j < numMochilas; j++) {
+                    if (j != mochilaAtual && capacidadesMochila[j] >= itens[i].getWeight()) {
+                        int valorAtual = calcularValor(solucao, itens);
+
+                        // Move o item para a nova mochila temporariamente
+                        solucao[i + mochilaAtual * numItens] = 0;
+                        solucao[i + j * numItens] = 1;
+                        capacidadesMochila[mochilaAtual] += itens[i].getWeight();
+                        capacidadesMochila[j] -= itens[i].getWeight();
+
+                        int novoValor = calcularValor(solucao, itens);
+
+                        // Verifica se o movimento realmente melhora a solução
+                        if (novoValor > valorAtual) {
+                            melhoriaEncontrada = true;
+                            System.out.println("Movendo item " + i + " da mochila " + mochilaAtual + " para a mochila " + j);
+                            break;
+                        } else {
+                            // Reverte o movimento se não melhorar a solução
+                            solucao[i + j * numItens] = 0;
+                            solucao[i + mochilaAtual * numItens] = 1;
+                            capacidadesMochila[mochilaAtual] -= itens[i].getWeight();
+                            capacidadesMochila[j] += itens[i].getWeight();
+                        }
+                    }
+                }
+
+                if (melhoriaEncontrada) {
+                    break;
+                }
+            }
+
+        } while (melhoriaEncontrada);
+
+        return solucao;
+    }
+
+    private static int calcularValor(int[] solucao, Item[] itens) {
+        int valorTotal = 0;
+        for (int i = 0; i < solucao.length; i++) {
+            if (solucao[i] == 1) {
+                int itemIndex = i % itens.length;
+                valorTotal += itens[itemIndex].getValue();
+            }
+        }
+        return valorTotal;
+    }
+
+    private static void imprimirSolucao(int[] solucao, Item[] itens, int[] capacidadesIniciais, int valorTotal) {
+        int numMochilas = capacidadesIniciais.length;
+        int numItens = itens.length;
+
+        System.out.println("Solução Final:");
+        for (int j = 0; j < numMochilas; j++) {
+            int somaPesos = 0;
+            int somaValores = 0;
+            System.out.println("Mochila " + j + " (Capacidade Inicial: " + capacidadesIniciais[j] + ")");
+            for (int i = 0; i < numItens; i++) {
+                if (solucao[i + j * numItens] == 1) {
+                    somaPesos += itens[i].getWeight();
+                    somaValores += itens[i].getValue();
+                    System.out.println("  Item " + i + " - Peso: " + itens[i].getWeight() + ", Valor: " + itens[i].getValue());
+                }
+            }
+            int capacidadeRestante = capacidadesIniciais[j] - somaPesos;
+
+            if (capacidadeRestante < 0) {
+                System.out.println("** Erro: A capacidade restante não pode ser negativa. Verifique o algoritmo **");
+            }
+
+            System.out.println("  Soma dos Pesos: " + somaPesos);
+            System.out.println("  Soma dos Valores: " + somaValores);
+            System.out.println("  Capacidade Restante após alocação: " + capacidadeRestante);
+            System.out.println();
+        }
+        System.out.println("Valor Total da Solução: " + valorTotal);
     }
 }

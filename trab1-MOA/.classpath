@@ -6,8 +6,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="C:/Geral/ComputacaoUEM/3ANO/MOA/SCPSolver.jar"/>
-	<classpathentry kind="lib" path="C:/Geral/ComputacaoUEM/3ANO/MOA/GLPKSolverPack.jar"/>
-	<classpathentry kind="lib" path="C:/Geral/ComputacaoUEM/3ANO/MOA/LPSOLVESolverPack.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
