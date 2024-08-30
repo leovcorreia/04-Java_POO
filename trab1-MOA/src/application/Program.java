@@ -43,7 +43,7 @@ public class Program {
             }
 
             // Parâmetros do GRASP
-            int numIteracoes = 50000; // Número de iterações do GRASP
+            int numIteracoes = 10000; // Aumentar as iterações
             int valorMaximo = 0;
             int[] melhorSolucao = null;
 
@@ -55,7 +55,7 @@ public class Program {
                 int[] solucao = construirSolucaoGulosaAleatoria(arrayItens, capacidadesMochila.clone());
                 System.out.println("Solução inicial construída.");
 
-                solucao = buscaLocal(solucao, arrayItens, capacidadesMochila.clone());
+                solucao = buscaLocalIntensificada(solucao, arrayItens, capacidadesMochila.clone());
 
                 int valorAtual = calcularValor(solucao, arrayItens);
 
@@ -69,7 +69,8 @@ public class Program {
             long endGraspTime = System.nanoTime();
             long graspTime = endGraspTime - startGraspTime;
 
-            imprimirSolucao(melhorSolucao, arrayItens, capacidadesMochila, valorMaximo);
+            imprimirSolucaoDetalhada(melhorSolucao, arrayItens, capacidadesMochila, valorMaximo);
+            imprimirSolucaoGeral(melhorSolucao, arrayItens, capacidadesMochila.length);
 
             System.out.println("=====================================");
             System.out.println("Relatório de Desempenho do GRASP:");
@@ -93,10 +94,13 @@ public class Program {
             double melhorRazao = Double.NEGATIVE_INFINITY;
             int melhorMochila = -1;
 
-            // Seleciona mochila baseada na RCL com diversificação
+            // Alterna entre diferentes critérios de seleção
             for (int j = 0; j < numMochilas; j++) {
                 if (capacidadesMochila[j] >= itens[i].getWeight()) {
                     double razao = (double) itens[i].getValue() / itens[i].getWeight();
+                    if (random.nextBoolean()) {
+                        razao = itens[i].getValue(); // Critério alternativo
+                    }
                     if (razao > melhorRazao || (razao == melhorRazao && random.nextBoolean())) {
                         melhorRazao = razao;
                         melhorMochila = j;
@@ -113,10 +117,12 @@ public class Program {
         return solucao;
     }
 
-    private static int[] buscaLocal(int[] solucao, Item[] itens, int[] capacidadesMochila) {
+    private static int[] buscaLocalIntensificada(int[] solucao, Item[] itens, int[] capacidadesMochila) {
         boolean melhoriaEncontrada;
         int numItens = itens.length;
         int numMochilas = capacidadesMochila.length;
+        int maxIteracoesSemMelhoria = 1000;
+        int iteracoesSemMelhoria = 0;
 
         do {
             melhoriaEncontrada = false;
@@ -153,6 +159,7 @@ public class Program {
 
                             if (novoValor > valorAtual) {
                                 melhoriaEncontrada = true;
+                                iteracoesSemMelhoria = 0;
                                 System.out.println("Movendo item " + i + " da mochila " + mochilaAtual + " para a mochila " + j);
                                 break;
                             } else {
@@ -171,6 +178,11 @@ public class Program {
                 }
             }
 
+            iteracoesSemMelhoria++;
+            if (iteracoesSemMelhoria >= maxIteracoesSemMelhoria) {
+                break;
+            }
+
         } while (melhoriaEncontrada);
 
         return solucao;
@@ -187,7 +199,7 @@ public class Program {
         return valorTotal;
     }
 
-    private static void imprimirSolucao(int[] solucao, Item[] itens, int[] capacidadesIniciais, int valorTotal) {
+    private static void imprimirSolucaoDetalhada(int[] solucao, Item[] itens, int[] capacidadesIniciais, int valorTotal) {
         int numMochilas = capacidadesIniciais.length;
         int numItens = itens.length;
 
@@ -206,7 +218,7 @@ public class Program {
             int capacidadeRestante = capacidadesIniciais[j] - somaPesos;
 
             if (capacidadeRestante < 0) {
-                System.out.println("** Erro: A capacidade restante não pode ser negativa. Verifique o algoritmo **");
+                System.out.println("** Erro: A capacidade restante não pode ser negativa. **");
             }
 
             System.out.println("  Soma dos Pesos: " + somaPesos);
@@ -216,4 +228,18 @@ public class Program {
         }
         System.out.println("Valor Total da Solução: " + valorTotal);
     }
+    
+    private static void imprimirSolucaoGeral(int[] solucao, Item[] itens, int numMochilas) {
+        int numItens = itens.length;
+
+        System.out.println("Solução Geral:");
+        for (int i = 0; i < numItens; i++) {
+            for (int j = 0; j < numMochilas; j++) {
+                if (solucao[i + j * numItens] == 1) {
+                    System.out.println("Item " + i + " alocado na Mochila " + j + " (x" + i + "_" + j + " = 1)");
+                }
+            }
+        }
+    }
+
 }
