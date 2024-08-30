@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Random;
 import java.util.Scanner;
 import entities.Item;
 
@@ -42,7 +43,7 @@ public class Program {
             }
 
             // Parâmetros do GRASP
-            int numIteracoes = 10000; // Número de iterações do GRASP
+            int numIteracoes = 50000; // Número de iterações do GRASP
             int valorMaximo = 0;
             int[] melhorSolucao = null;
 
@@ -53,12 +54,15 @@ public class Program {
                 System.out.println("Iteração " + (it + 1) + " de " + numIteracoes);
                 int[] solucao = construirSolucaoGulosaAleatoria(arrayItens, capacidadesMochila.clone());
                 System.out.println("Solução inicial construída.");
+
                 solucao = buscaLocal(solucao, arrayItens, capacidadesMochila.clone());
+
                 int valorAtual = calcularValor(solucao, arrayItens);
 
                 if (valorAtual > valorMaximo) {
                     valorMaximo = valorAtual;
                     melhorSolucao = solucao.clone();
+                    System.out.println("Nova melhor solução encontrada com valor: " + valorMaximo);
                 }
             }
 
@@ -83,14 +87,26 @@ public class Program {
         int numItens = itens.length;
         int numMochilas = capacidadesMochila.length;
         int[] solucao = new int[numItens * numMochilas];
+        Random random = new Random();
 
         for (int i = 0; i < numItens; i++) {
+            double melhorRazao = Double.NEGATIVE_INFINITY;
+            int melhorMochila = -1;
+
+            // Seleciona mochila baseada na RCL com diversificação
             for (int j = 0; j < numMochilas; j++) {
                 if (capacidadesMochila[j] >= itens[i].getWeight()) {
-                    solucao[i + j * numItens] = 1;
-                    capacidadesMochila[j] -= itens[i].getWeight();
-                    break;
+                    double razao = (double) itens[i].getValue() / itens[i].getWeight();
+                    if (razao > melhorRazao || (razao == melhorRazao && random.nextBoolean())) {
+                        melhorRazao = razao;
+                        melhorMochila = j;
+                    }
                 }
+            }
+
+            if (melhorMochila != -1) {
+                solucao[i + melhorMochila * numItens] = 1;
+                capacidadesMochila[melhorMochila] -= itens[i].getWeight();
             }
         }
 
@@ -120,25 +136,32 @@ public class Program {
                     if (j != mochilaAtual && capacidadesMochila[j] >= itens[i].getWeight()) {
                         int valorAtual = calcularValor(solucao, itens);
 
-                        // Move o item para a nova mochila temporariamente
+                        // Tentar mover o item para a nova mochila sem violar a capacidade
                         solucao[i + mochilaAtual * numItens] = 0;
                         solucao[i + j * numItens] = 1;
                         capacidadesMochila[mochilaAtual] += itens[i].getWeight();
                         capacidadesMochila[j] -= itens[i].getWeight();
 
-                        int novoValor = calcularValor(solucao, itens);
-
-                        // Verifica se o movimento realmente melhora a solução
-                        if (novoValor > valorAtual) {
-                            melhoriaEncontrada = true;
-                            System.out.println("Movendo item " + i + " da mochila " + mochilaAtual + " para a mochila " + j);
-                            break;
-                        } else {
-                            // Reverte o movimento se não melhorar a solução
+                        if (capacidadesMochila[j] < 0) { // Verificação adicional
+                            // Capacidade violada, reverte o movimento
                             solucao[i + j * numItens] = 0;
                             solucao[i + mochilaAtual * numItens] = 1;
                             capacidadesMochila[mochilaAtual] -= itens[i].getWeight();
                             capacidadesMochila[j] += itens[i].getWeight();
+                        } else {
+                            int novoValor = calcularValor(solucao, itens);
+
+                            if (novoValor > valorAtual) {
+                                melhoriaEncontrada = true;
+                                System.out.println("Movendo item " + i + " da mochila " + mochilaAtual + " para a mochila " + j);
+                                break;
+                            } else {
+                                // Reverte o movimento se não melhorar a solução
+                                solucao[i + j * numItens] = 0;
+                                solucao[i + mochilaAtual * numItens] = 1;
+                                capacidadesMochila[mochilaAtual] -= itens[i].getWeight();
+                                capacidadesMochila[j] += itens[i].getWeight();
+                            }
                         }
                     }
                 }
