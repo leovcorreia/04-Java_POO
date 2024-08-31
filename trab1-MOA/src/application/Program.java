@@ -51,6 +51,7 @@ public class Program {
             long startGraspTime = System.nanoTime();
 
             for (int it = 0; it < numIteracoes; it++) {
+            	
                 System.out.println("Iteração " + (it + 1) + " de " + numIteracoes);
                 int[] solucao = construirSolucaoGulosaAleatoria(arrayItens, capacidadesMochila.clone());
                 System.out.println("Solução inicial construída.");
@@ -203,7 +204,7 @@ public class Program {
         int numMochilas = capacidadesIniciais.length;
         int numItens = itens.length;
 
-        System.out.println("Solução Final:");
+        System.out.println("Solução Detalhada:");
         for (int j = 0; j < numMochilas; j++) {
             int somaPesos = 0;
             int somaValores = 0;
