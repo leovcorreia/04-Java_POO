@@ -110,60 +110,76 @@ public class Program {
     }
 
     private static int[] buscaLocal(int[] solucao, Item[] itens, int[] capacidadesMochila) {
+        // Declaração de uma variável para indicar se uma melhoria foi encontrada durante a busca local
         boolean melhoriaEncontrada;
+
+        // Número total de itens e mochilas
         int numItens = itens.length;
         int numMochilas = capacidadesMochila.length;
 
+        // Laço principal da busca local, que continua até que nenhuma melhoria seja encontrada
         do {
-            melhoriaEncontrada = false;
+            melhoriaEncontrada = false; // Inicia cada iteração assumindo que nenhuma melhoria foi encontrada
 
+            // Loop através de cada item para tentar realocá-lo
             for (int i = 0; i < numItens; i++) {
-                int mochilaAtual = -1;
+                int mochilaAtual = -1; // Variável para armazenar a mochila atual onde o item está alocado
+
+                // Loop para encontrar em qual mochila o item i está alocado atualmente
                 for (int j = 0; j < numMochilas; j++) {
-                    if (solucao[i + j * numItens] == 1) {
-                        mochilaAtual = j;
-                        break;
+                    if (solucao[i + j * numItens] == 1) { // Verifica se o item i está alocado na mochila j
+                        mochilaAtual = j; // Se o item está alocado na mochila j, guarda o índice de j
+                        break; // Interrompe o loop porque já encontrou a mochila atual do item
                     }
                 }
 
+                // Se o item i não estiver alocado em nenhuma mochila, passa para o próximo item
                 if (mochilaAtual == -1) continue;
 
+                // Loop para verificar em qual outra mochila o item i pode ser realocado
                 for (int j = 0; j < numMochilas; j++) {
+                    // Verifica se j não é a mochila atual e se a mochila j tem capacidade suficiente
                     if (j != mochilaAtual && capacidadesMochila[j] >= itens[i].getWeight()) {
+                        // Calcula o valor total da solução antes da realocação do item
                         int valorAtual = calcularValor(solucao, itens);
 
-                        // Move o item para a nova mochila temporariamente
-                        solucao[i + mochilaAtual * numItens] = 0;
-                        solucao[i + j * numItens] = 1;
-                        capacidadesMochila[mochilaAtual] += itens[i].getWeight();
-                        capacidadesMochila[j] -= itens[i].getWeight();
+                        // Move o item i da mochila atual para a mochila j temporariamente
+                        solucao[i + mochilaAtual * numItens] = 0; // Remove o item da mochila atual
+                        solucao[i + j * numItens] = 1; // Aloca o item na nova mochila
+                        capacidadesMochila[mochilaAtual] += itens[i].getWeight(); // Atualiza a capacidade da mochila atual
+                        capacidadesMochila[j] -= itens[i].getWeight(); // Atualiza a capacidade da nova mochila
 
+                        // Calcula o valor total da solução após o movimento
                         int novoValor = calcularValor(solucao, itens);
 
-                        // Verifica se o movimento realmente melhora a solução
+                        // Se o movimento melhorou a solução, mantém a nova alocação
                         if (novoValor > valorAtual) {
-                            melhoriaEncontrada = true;
+                            melhoriaEncontrada = true; // Marca que uma melhoria foi encontrada
                             System.out.println("Movendo item " + i + " da mochila " + mochilaAtual + " para a mochila " + j);
-                            break;
+                            break; // Interrompe o loop porque uma melhoria foi encontrada
                         } else {
-                            // Reverte o movimento se não melhorar a solução
-                            solucao[i + j * numItens] = 0;
-                            solucao[i + mochilaAtual * numItens] = 1;
-                            capacidadesMochila[mochilaAtual] -= itens[i].getWeight();
-                            capacidadesMochila[j] += itens[i].getWeight();
+                            // Se não houver melhoria, reverte a alocação para o estado anterior
+                            solucao[i + j * numItens] = 0; // Remove o item da nova mochila
+                            solucao[i + mochilaAtual * numItens] = 1; // Recoloca o item na mochila original
+                            capacidadesMochila[mochilaAtual] -= itens[i].getWeight(); // Reverte a capacidade da mochila atual
+                            capacidadesMochila[j] += itens[i].getWeight(); // Reverte a capacidade da nova mochila
                         }
                     }
                 }
 
+                // Se uma melhoria foi encontrada, interrompe o loop para verificar novamente a solução
                 if (melhoriaEncontrada) {
                     break;
                 }
             }
 
+        // Continua o processo até que nenhuma melhoria seja encontrada
         } while (melhoriaEncontrada);
 
+        // Retorna a solução final após a busca local
         return solucao;
     }
+
 
     private static int calcularValor(int[] solucao, Item[] itens) {
         int valorTotal = 0;
